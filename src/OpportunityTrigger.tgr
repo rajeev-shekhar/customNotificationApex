@@ -1,0 +1,25 @@
+trigger OpportunityTrigger on Opportunity (after update) {
+    
+    String cId = CustomNotificationsHelper.queryCustomNotificationType('Sample_Custom_Notification');
+    customNotificationJSON j = new customNotificationJSON();
+    List<customNotificationJSON.cls_inputs> inputList = new List<customNotificationJSON.cls_inputs>();
+    
+    for(Opportunity o: trigger.new) {
+        if(o.StageName == 'Closed Won' && o.StageName != trigger.oldMap.get(o.Id).StageName) {
+            inputList.add(
+                CustomNotificationsHelper.createCustomNotificationsPayload(
+                cId,
+                'Opportunity Closed',
+                o.Name,
+                o.Id,
+                new String[] {UserInfo.getUserId()}
+                )
+            );
+        }
+    }
+    
+    if(inputList.size() > 0) {
+        j.inputs = inputList;
+        CustomNotificationsHelper.publishCustomNotifications(JSON.serialize(j),'future');
+    }   
+}
