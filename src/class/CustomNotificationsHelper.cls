@@ -1,4 +1,3 @@
-//Author: Rajeev Shekhar
 //Description: Helper class to publish custom notifications
 
 /*
